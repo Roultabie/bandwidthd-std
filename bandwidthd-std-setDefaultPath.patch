@@ -1,0 +1,65 @@
+--- bandwidthd.c	2014-02-26 17:31:36.563873022 +0100
++++ bandwidthd.c.setDefaultPath	2014-02-26 17:31:36.563873022 +0100
+@@ -333,10 +333,10 @@
+ 
+ 	if (config.graph)
+ 		{
+-		bd_CollectingData("htdocs/index.html");
+-		bd_CollectingData("htdocs/index2.html");
+-		bd_CollectingData("htdocs/index3.html");
+-		bd_CollectingData("htdocs/index4.html");
++		bd_CollectingData(HTDOCS_DIR"/htdocs/index.html");
++		bd_CollectingData(HTDOCS_DIR"/htdocs/index2.html");
++		bd_CollectingData(HTDOCS_DIR"/htdocs/index3.html");
++		bd_CollectingData(HTDOCS_DIR"/htdocs/index4.html");
+ 		}
+ 
+ 	/* detach from console. */
+--- configure	2014-02-26 17:31:36.563873022 +0100
++++ configure.setDefaultPath	2014-02-26 17:31:36.563873022 +0100
+@@ -80,7 +80,6 @@
+ #
+ # Initializations.
+ #
+-ac_default_prefix=/usr/local
+ cross_compiling=no
+ subdirs=
+ MFLAGS= MAKEFLAGS=
+--- Makefile.in	2014-02-27 09:24:25.642411667 +0100
++++ Makefile.in.setDefaultPath	2014-02-27 09:24:25.642411667 +0100
+@@ -1,10 +1,14 @@
+ exec_prefix = @exec_prefix@
+ prefix = @prefix@
++bindir = @bindir@
++sysconfdir = @sysconfdir@
++localstatedir = @localstatedir@
++
+ CC = @CC@
+ LDFLAGS = @LDFLAGS@ @LIBS@
+ OBS= bandwidthd.o graph.o conf.tab.o conf.l.o
+ 
+-CFLAGS= -Wall @CFLAGS@ @CPPFLAGS@ @DEFS@ -DINSTALL_DIR="\"$(exec_prefix)/bandwidthd\""
++CFLAGS= -Wall @CFLAGS@ @CPPFLAGS@ @DEFS@ -DINSTALL_DIR="\"$(exec_prefix)\"" -DHTDOCS_DIR="\"$(localstatedir)/www/bandwidthd\""
+ NONWALLCFLAGS= @CFLAGS@ @CPPFLAGS@ @DEFS@
+ 
+ # Debugging stuff
+@@ -38,12 +42,13 @@
+ 	rm -f conf.tab.c conf.tab.h conf.l.c config.h.in configure 
+ 
+ install: all
+-	@INSTALL@ -d $(DESTDIR)$(exec_prefix)/bandwidthd/etc
+-	@INSTALL@ -d $(DESTDIR)$(exec_prefix)/bandwidthd/htdocs
+-	@INSTALL@ -m755 -s bandwidthd $(DESTDIR)$(exec_prefix)/bandwidthd	
+-	if [ ! -f $(DESTDIR)$(exec_prefix)/bandwidthd/etc/bandwidthd.conf ] ; then @INSTALL@ -m644 etc/bandwidthd.conf $(DESTDIR)$(exec_prefix)/bandwidthd/etc/ ; fi
+-	@INSTALL@ -m644 htdocs/legend.gif $(DESTDIR)$(exec_prefix)/bandwidthd/htdocs
+-	@INSTALL@ -m644 htdocs/logo.gif $(DESTDIR)$(exec_prefix)/bandwidthd/htdocs
++	@INSTALL@ -d $(DESTDIR)$(bindir)
++	@INSTALL@ -d $(DESTDIR)$(sysconfdir)
++	@INSTALL@ -d $(DESTDIR)$(localstatedir)/www/bandwidthd/htdocs
++	@INSTALL@ -m755 -s bandwidthd $(DESTDIR)$(bindir)	
++	if [ ! -f $(DESTDIR)$(sysconfdir)/bandwidthd.conf ] ; then @INSTALL@ -m644 etc/bandwidthd.conf $(DESTDIR)$(sysconfdir); fi
++	@INSTALL@ -m644 htdocs/legend.gif $(DESTDIR)$(localstatedir)/www/bandwidthd/htdocs
++	@INSTALL@ -m644 htdocs/logo.gif $(DESTDIR)$(localstatedir)/www/bandwidthd/htdocs
+ 
+ #**** Stuff where -WALL is turned off to reduce the noise in a compile so I can see my own errors *******************
+ conf.l.o: conf.l.c

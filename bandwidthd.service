@@ -1,0 +1,13 @@
+[Unit]
+Description=Bandwidth tracker
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/bandwidthd.pid
+ExecStart=/usr/bin/bandwidthd start
+ExecStop=/usr/bin/bandwidthd stop
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target
